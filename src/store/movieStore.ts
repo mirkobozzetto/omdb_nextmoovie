@@ -17,11 +17,20 @@ export const useMovieStore = create<MovieState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const result = await searchMovies(query, apiKey);
-      set({ movies: result.Search, isLoading: false });
+      if (result.Response === "True") {
+        set({ movies: result.Search, isLoading: false });
+      } else {
+        set({
+          error: "Failed to fetch movies. Please try again.",
+          isLoading: false,
+          movies: [],
+        });
+      }
     } catch (err) {
       set({
         error: "Failed to fetch movies. Please try again.",
         isLoading: false,
+        movies: [],
       });
     }
   },

@@ -2,29 +2,17 @@ import { z } from "zod";
 
 export const MovieSchema = z.object({
   Title: z.string(),
-  Year: z.number(),
-  Rated: z.string(),
-  Released: z.string(),
-  Runtime: z.string(),
-  Genre: z.string(),
-  Director: z.string(),
-  Writer: z.string(),
-  Actors: z.string(),
-  Language: z.string(),
-  Country: z.string(),
-  Awards: z.string(),
-  Poster: z.string(),
-  Metascore: z.string(),
-  imdbRating: z.string(),
-  imdbVotes: z.string(),
+  Year: z.string(),
   imdbID: z.string(),
   Type: z.string(),
+  Poster: z.string(),
 });
 
 export const SearchResultSchema = z.object({
-  Search: z.array(MovieSchema),
-  totalResults: z.number(),
+  Search: z.array(MovieSchema).optional(),
+  totalResults: z.string().optional(),
   Response: z.string(),
+  Error: z.string().optional(),
 });
 
 export type Movie = z.infer<typeof MovieSchema>;
