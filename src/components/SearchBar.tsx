@@ -1,40 +1,56 @@
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
 import { useDebounce } from "use-debounce";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
-export function SearchBar({ onSearch }: { onSearch: (query: string) => void }) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [query, setQuery] = useState(searchParams.get("q") || "");
-  const [debouncedQuery] = useDebounce(query, 300);
+interface SearchBarProps {
+  onSearch: (query: string) => void;
+  className?: string;
+}
 
-  useEffect(() => {
-    if (debouncedQuery) {
-      router.push(`/?q=${encodeURIComponent(debouncedQuery)}`, {
-        scroll: false,
-      });
-      onSearch(debouncedQuery);
+export function SearchBar({ onSearch, className }: SearchBarProps) {
+  const [query, setQuery] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [debouncedQuery] = useDebounce(query, 500);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (query.trim()) {
+      setError(null);
+      onSearch(query);
+    } else {
+      setError("Please enter a search term");
     }
-  }, [debouncedQuery, router, onSearch]);
+  };
 
   return (
-    <form onSubmit={(e) => e.preventDefault()} className="w-full max-w-sm">
+    <form onSubmit={handleSubmit} className={cn("w-full max-w-sm", className)}>
       <fieldset>
-        <legend className="mb-2 font-semibold text-lg">Search Movies</legend>
-        <div className="flex items-center space-x-2">
+        <legend className={cn("mb-2 font-semibold text-lg")}>
+          Search Movies
+        </legend>
+        <div className={cn("flex items-center space-x-2")}>
           <Input
             type="text"
             placeholder="Enter movie title..."
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              if (error) setError(null);
+            }}
+            className={cn(
+              "flex-grow",
+              query.length > 0 && "border-blue-500",
+              error && "border-red-500"
+            )}
           />
-          <Button type="submit" onClick={() => onSearch(query)}>
+          <Button type="submit" className={cn("whitespace-nowrap")}>
             Search
           </Button>
         </div>
       </fieldset>
+      {error && <p className="mt-2 text-red-500">{error}</p>}
     </form>
   );
 }
