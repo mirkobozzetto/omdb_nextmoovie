@@ -14,15 +14,20 @@ export function MovieSearch() {
   const error = useMovieStore((state) => state.error);
   const [debouncedSearch] = useDebounce(search, 500);
 
-  const handleSearch = (query: string) => {
-    if (query.trim()) {
-      debouncedSearch(query);
+  const handleSearch = (data: { query: string; limit?: string }) => {
+    if (data.query.trim()) {
+      debouncedSearch(data.query);
     }
   };
 
   return (
     <>
-      <SearchBar onSearch={handleSearch} className="mb-6" />
+      <SearchBar
+        onSearch={(query) => handleSearch({ query })}
+        className="mb-6"
+      />
+      {/* <SearchForm onSearch={handleSearch} className="mb-6" /> */}
+
       {isLoading && <LoadingIndicator />}
       {error && <ErrorDisplay error={error} />}
       {movies.length > 0 && <MovieList movies={movies} />}

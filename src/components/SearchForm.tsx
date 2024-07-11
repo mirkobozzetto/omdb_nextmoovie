@@ -16,7 +16,7 @@ const searchSchema = z.object({
   limit: z.string().optional(),
 });
 
-type SearchFormData = z.infer<typeof searchSchema>;
+export type SearchFormData = z.infer<typeof searchSchema>;
 
 interface SearchFormProps {
   onSearch: (data: SearchFormData) => void;
@@ -54,7 +54,7 @@ export function SearchForm({ onSearch }: SearchFormProps) {
               <SelectValue placeholder="Number of results" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All results</SelectItem>
+              <SelectItem value="0">All results</SelectItem>
               <SelectItem value="10">10</SelectItem>
               <SelectItem value="20">20</SelectItem>
               <SelectItem value="30">30</SelectItem>
